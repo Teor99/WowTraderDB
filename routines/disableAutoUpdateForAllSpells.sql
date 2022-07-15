@@ -1,3 +1,5 @@
+DROP PROCEDURE IF EXISTS disableAutoUpdateForAllSpells;
+
 CREATE
     DEFINER = root@localhost PROCEDURE disableAutoUpdateForAllSpells()
 BEGIN
