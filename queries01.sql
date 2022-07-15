@@ -34,7 +34,34 @@ WHERE gc.name = 'Leoaprd'
 
 
 SELECT min_buyout AS val
-                FROM item_history
-                WHERE id = 2840
-                  AND DATEDIFF(timestamp, NOW()) < 10
-                ORDER BY val DESC
+FROM item_history
+WHERE id = 2840
+  AND DATEDIFF(timestamp, NOW()) < 10
+ORDER BY val DESC;
+
+WITH id_table AS (SELECT id
+                  FROM item_cost
+                  WHERE id NOT IN (SELECT id
+                                   FROM item_cost
+                                   WHERE source = 'vendor'))
+SELECT id_table.id,
+       i.name,
+       class,
+       subclass,
+       source,
+       price,
+       getMedianPriceForLastDays(id_table.id, 14)         AS m,
+       price - getMedianPriceForLastDays(id_table.id, 14) AS diff,
+       ROUND((price - getMedianPriceForLastDays(id_table.id, 14)) /
+             getMedianPriceForLastDays(id_table.id, 14) * 100,
+             2)                                           AS ch
+FROM id_table
+         JOIN item i ON id_table.id = i.item_id
+         JOIN world.item_template wit ON id_table.id = wit.entry
+         JOIN item_cost ic ON id_table.id = ic.id;
+
+SELECT *
+FROM item_stat
+WHERE c = 7
+ORDER BY ch
+
