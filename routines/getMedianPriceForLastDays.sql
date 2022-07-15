@@ -11,8 +11,7 @@ BEGIN
           FROM (SELECT min_buyout AS val
                 FROM item_history
                 WHERE id = input_item_id
-                  AND DATEDIFF(timestamp, NOW()) < days
-                ORDER BY timestamp DESC) AS d,
+                  AND DATEDIFF(timestamp, NOW()) < days) AS d,
                (SELECT @rownum := 0) AS r
           WHERE d.val IS NOT NULL
           ORDER BY d.val) AS dd
