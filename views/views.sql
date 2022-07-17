@@ -301,3 +301,44 @@ WHERE auto_update = TRUE
   AND class = 7
   AND subclass = 7
 ORDER BY profit DESC;
+
+#
+
+DROP VIEW IF EXISTS ah_sell_1day;
+
+CREATE VIEW ah_sell_1day AS
+SELECT thr.item_id,
+       name,
+       SUM(count)        AS total_count,
+       SUM(count * cost) / 10000 AS profit
+FROM trade_history_record thr
+         LEFT JOIN item i ON thr.item_id = i.item_id
+WHERE action = 'sell'
+  AND TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 24
+GROUP BY action, item_id
+ORDER BY profit DESC;
+
+#
+
+DROP VIEW IF EXISTS ah_buy_1day;
+
+CREATE VIEW ah_buy_1day AS
+SELECT thr.item_id,
+       name,
+       SUM(count)        AS total_count,
+       SUM(count * cost) / 10000 AS cost
+FROM trade_history_record thr
+         LEFT JOIN item i ON thr.item_id = i.item_id
+WHERE action = 'buy'
+  AND TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 24
+GROUP BY action, item_id
+ORDER BY cost DESC;
+
+#
+
+DROP VIEW IF EXISTS ah_profit_1day;
+
+CREATE VIEW ah_profit_1day AS
+SELECT (SELECT SUM(profit) FROM ah_sell_1day)                                       AS sell,
+       (SELECT SUM(cost) FROM ah_buy_1day)                                          AS buy,
+       (SELECT SUM(profit) FROM ah_sell_1day) - (SELECT SUM(cost) FROM ah_buy_1day) AS profit;
