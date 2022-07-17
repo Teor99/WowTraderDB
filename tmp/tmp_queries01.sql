@@ -63,5 +63,27 @@ FROM id_table
 SELECT *
 FROM item_stat
 WHERE c = 7
-ORDER BY ch
+ORDER BY ch;
 
+CREATE TABLE item_group
+(
+    id         INT          NOT NULL,
+    name       VARCHAR(255) NULL,
+    multiplier INT          NULL,
+    PRIMARY KEY (id)
+);
+
+SELECT thr.item_id,
+       name,
+       SUM(count)                AS total_count,
+       SUM(count * cost) / 10000 AS cost
+FROM trade_history_record thr
+         LEFT JOIN item i ON thr.item_id = i.item_id
+WHERE action = 'buy'
+  AND TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 24
+GROUP BY action, item_id
+ORDER BY cost DESC;
+
+SELECT (SELECT SUM(profit) FROM ah_sell_1day)                                       AS sell,
+       (SELECT SUM(cost) FROM ah_buy_1day)                                          AS buy,
+       (SELECT SUM(profit) FROM ah_sell_1day) - (SELECT SUM(cost) FROM ah_buy_1day) AS profit
