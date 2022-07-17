@@ -342,3 +342,44 @@ CREATE VIEW ah_profit_1day AS
 SELECT (SELECT SUM(profit) FROM ah_sell_1day)                                       AS sell,
        (SELECT SUM(cost) FROM ah_buy_1day)                                          AS buy,
        (SELECT SUM(profit) FROM ah_sell_1day) - (SELECT SUM(cost) FROM ah_buy_1day) AS profit;
+
+#
+
+DROP VIEW IF EXISTS ah_sell_7days;
+
+CREATE VIEW ah_sell_7days AS
+SELECT thr.item_id,
+       name,
+       SUM(count)        AS total_count,
+       SUM(count * cost) / 10000 AS profit
+FROM trade_history_record thr
+         LEFT JOIN item i ON thr.item_id = i.item_id
+WHERE action = 'sell'
+  AND TIMESTAMPDIFF(DAY, timestamp, NOW()) <= 7
+GROUP BY action, item_id
+ORDER BY profit DESC;
+
+#
+
+DROP VIEW IF EXISTS ah_buy_7days;
+
+CREATE VIEW ah_buy_7days AS
+SELECT thr.item_id,
+       name,
+       SUM(count)        AS total_count,
+       SUM(count * cost) / 10000 AS cost
+FROM trade_history_record thr
+         LEFT JOIN item i ON thr.item_id = i.item_id
+WHERE action = 'buy'
+  AND TIMESTAMPDIFF(DAY, timestamp, NOW()) <= 7
+GROUP BY action, item_id
+ORDER BY cost DESC;
+
+#
+
+DROP VIEW IF EXISTS ah_profit_7days;
+
+CREATE VIEW ah_profit_7days AS
+SELECT (SELECT SUM(profit) FROM ah_sell_7days)                                       AS sell,
+       (SELECT SUM(cost) FROM ah_buy_7days)                                          AS buy,
+       (SELECT SUM(profit) FROM ah_sell_7days) - (SELECT SUM(cost) FROM ah_buy_7days) AS profit;
