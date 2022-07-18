@@ -109,6 +109,18 @@ ORDER BY pf1;
 
 #
 
+DROP VIEW IF EXISTS item_stat_trade_goods_metal_truesilver;
+
+CREATE VIEW item_stat_trade_goods_metal_truesilver AS
+SELECT istgm.*,
+       ROUND((price / ig.multiplier), 4) AS pf1
+FROM item_stat_trade_goods_metal istgm
+         JOIN item_group ig ON istgm.id = ig.id
+WHERE ig.name = 'truesilver'
+ORDER BY pf1;
+
+#
+
 DROP VIEW IF EXISTS item_stat_trade_goods_metal_thorium;
 
 CREATE VIEW item_stat_trade_goods_metal_thorium AS
