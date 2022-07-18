@@ -395,3 +395,24 @@ CREATE VIEW ah_profit_7days AS
 SELECT (SELECT SUM(profit) FROM ah_sell_7days)                                       AS sell,
        (SELECT SUM(cost) FROM ah_buy_7days)                                          AS buy,
        (SELECT SUM(profit) FROM ah_sell_7days) - (SELECT SUM(cost) FROM ah_buy_7days) AS profit;
+
+#
+
+DROP VIEW IF EXISTS item_stat_bags;
+
+CREATE VIEW item_stat_bags AS
+SELECT id,
+       ist.name,
+       isc.subclass_name AS scname,
+       source,
+       price,
+       m,
+       diff,
+       ch,
+       ContainerSlots                     AS slots,
+       ROUND((price / ContainerSlots), 2) AS pfs
+FROM item_stat ist
+         LEFT JOIN world.item_template wit ON ist.id = wit.entry
+         LEFT JOIN item_subclass isc ON wit.class = isc.class AND wit.subclass = isc.subclass
+WHERE c = 1
+ORDER BY c, sc, slots, pfs;
