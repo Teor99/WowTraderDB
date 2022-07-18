@@ -1,5 +1,7 @@
 # WowTrader DB
 
+Database config for project [WOWSnifferServer](https://github.com/Teor99/WOWSnifferServer)
+
 ## Config DB
 
 1. Connect with root privileges, create db and user:
@@ -22,7 +24,7 @@
 
 5. Insert data from backup (Reference tables)
    ```
-   mysql -u root -p wowtrader < db/ref_tables.sql
+   mysql -u root -p wowtrader < db/db.sql
    ```
 6. DB ready.
 
@@ -31,6 +33,7 @@
 - item
 - item_class
 - item_subclass
+- item_group
 - item_cost (vendor records)
 - spell
 - spell_has_alt_spell
@@ -39,7 +42,7 @@
 
 Backup:
 ```
-mysqldump -u root -p wowtrader item item_class item_subclass item_cost spell spell_has_alt_spell spell_need_subspell component > db/ref_tables.sql
+mysqldump -u root -p wowtrader item item_class item_subclass item_group item_cost spell spell_has_alt_spell spell_need_subspell component > db/db.sql
 ```
 
 ## Tables for temp game data
