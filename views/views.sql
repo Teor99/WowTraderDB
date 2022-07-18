@@ -245,8 +245,9 @@ DROP VIEW IF EXISTS item_stat_trade_rods;
 CREATE VIEW item_stat_trade_rods AS
 SELECT *
 FROM item_stat_trade_goods
-WHERE sc = 12
-  AND name LIKE '%жезл%'
+WHERE (sc = 12
+    AND name LIKE '%жезл%')
+   OR name LIKE '%инкрусти%'
 ORDER BY ch;
 
 #
